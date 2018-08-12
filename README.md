@@ -11,7 +11,7 @@ You'll need to add the Robonect skill in your assistant. It's available on [Snip
 ### SAM (preferred)
 To install the action on your device, you can use [Sam](https://snips.gitbook.io/getting-started/installation)
 
-`sam install action -g https://github.com/shilbert01/snips-skill-robonect.git`
+`sam install actions -g https://github.com/shilbert01/snips-skill-robonect.git`
 
 ### Manually
 
@@ -32,7 +32,7 @@ sudo systemctl start snips-skill-server
 
 `Hey Snips`
 
-`Wie ist der Status meines Rasenmähers?`
+`Wie ist der Status von Ohnezahn?`
 
 ## Logs
 Show snips-skill-server logs with sam:
