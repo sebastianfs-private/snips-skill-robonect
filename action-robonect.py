@@ -9,7 +9,6 @@ from hermes_python.ontology import *
 import io
 from robonect.robonect_client import SnipsRobonect
 
-
 CONFIGURATION_ENCODING_FORMAT = "utf-8"
 CONFIG_INI = "config.ini"
 
@@ -31,10 +30,10 @@ def read_configuration_file(configuration_file):
 def subscribe_intent_callback(hermes, intentMessage):
     user,intentname = intentMessage.intent.intent_name.split(':')  # the user can fork the intent with this method
     conf = read_configuration_file(CONFIG_INI)
-    action_wrapper(hermes, intentMessage, intentname, conf)
+    action_wrapper(hermes, intentMessage, conf)
 
 
-def action_wrapper(hermes, intentMessage, intentname, conf):
+def action_wrapper(hermes, intentMessage, conf):
     """ Write the body of the function that will be executed once the intent is recognized. 
     In your scope, you have the following objects : 
     - intentMessage : an object that represents the recognized intent
@@ -43,7 +42,7 @@ def action_wrapper(hermes, intentMessage, intentname, conf):
 
     Refer to the documentation for further details. 
     """
-
+    intentname = intentMessage.intent.intent_name.split(':')[1]
     robonect = SnipsRobonect(
 	conf["secret"]["ipaddress"],
 	conf["secret"]["username"],
@@ -73,7 +72,6 @@ def action_wrapper(hermes, intentMessage, intentname, conf):
 	    mower["status"]["battery"],
 	    mower_mode_codes[mower["status"]["mode"]],
 	    mower_status_codes[mower["status"]["status"]])
-	#hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))
 
     if intentname == "StopMower":
 	mower = robonect.getStatus()
@@ -86,7 +84,6 @@ def action_wrapper(hermes, intentMessage, intentname, conf):
 		result_sentence = u'%s wurde erfolgreich gestoppt'% (mower["name"])
 	    else:
 		result_sentence = u'%s konnte nicht erfolgreich gestoppt werden'% (mower["name"])
-	#hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))
 
     if intentname == "StartMower":
 	mower = robonect.getStatus()
@@ -99,7 +96,6 @@ def action_wrapper(hermes, intentMessage, intentname, conf):
 		result_sentence = u'%s wurde erfolgreich gestartet'% (mower["name"])
 	    else:
 		result_sentence = u'%s konnte nicht erfolgreich gestartet werden'% (mower["name"])
-	#hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))
 
     if intentname == "SetModeMower":
 	for (slot_value, slot) in intentMessage.slots.items():
@@ -109,49 +105,23 @@ def action_wrapper(hermes, intentMessage, intentname, conf):
 	    if mower["status"]["mode"] == 0:
 		result_sentence = u'%s ist bereits im Auto-Modus'% (mower["name"])
 	    else:
-		robonect.setMode("auto") # man | eod | home
+		robonect.setMode("auto")
 		result_sentence = u'%s ist jetzt im Auto-Modus'% (mower["name"])
 	elif slot[0].slot_value.value.value == 'manuell':
 	    if mower["status"]["mode"] == 1:
 		result_sentence = u'%s ist bereits im manuellen Modus'% (mower["name"])
 	    else:
-		robonect.setMode('man') # man | eod | home
+		robonect.setMode('man')
 		result_sentence = u'%s ist jetzt im manuellen Modus'% (mower["name"])
 	elif slot[0].slot_value.value.value == 'home':
 	    if mower["status"]["mode"] == 2:
 		result_sentence = u'%s ist bereits im Modus hohm'% (mower["name"])
 	    else:
-		robonect.setMode('home') # man | eod | home
+		robonect.setMode('home')
 		result_sentence = u'%s ist jetzt im Modus hohm'% (mower["name"])
-	#hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))
 
     hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))
 
-#    else:
-#	print "else"
-#	print intentname
-#	print intentMessage.session_id
-#	result_sentence = u'Irgendwas hat nicht hingehauen'
-#	hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8')) 
-
-
 if __name__ == "__main__":
-    """
-    conf = read_configuration_file("config.ini")
-
-    if conf.get("secret").get("hostname") is None:
-        print "No ipaddress in config.ini, you must setup the ipaddress of your mower for this skill to work"
-    elif len(conf.get("secret").get("username")) == 0:
-        print "No username in config.ini, you must set the username to access your mower for this skill to work"
-    elif len(conf.get("secret").get("password")) == 0:
-        print "No password in config.ini, you must set the password to access your  mower for this skill to work"
-
-    skill_locale = config["global"].get("locale", "de_DE")
-
-    skill = SnipsRobonect(conf["secret"]["ipaddress"],
-                     conf["secret"]["username"],conf["secret"]["password"],locale=skill_locale)
-    lang = "DE"
-"""
     with Hermes("localhost:1883") as h:
-#        h.skill = skill
-        h.subscribe_intents(subscribe_intent_callback).start()
+	h.subscribe_intents(subscribe_intent_callback).start()
