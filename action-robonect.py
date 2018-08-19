@@ -120,8 +120,6 @@ def action_wrapper(hermes, intentMessage, intentname, conf):
 	    else:
 		robonect.setMode('home') # man | eod | home
 		result_sentence = u'%s ist jetzt im Modus hohm'% (mower["name"])
-    else:
-	result_sentence = "Ich habe das Kommando nicht verstanden."
 
     current_session_id = intentMessage.session_id
     hermes.publish_end_session(current_session_id, result_sentence.encode('utf-8'))
