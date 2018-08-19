@@ -46,9 +46,24 @@ def action_wrapper(hermes, intentMessage, conf):
 	conf["secret"]["username"],
 	conf["secret"]["password"])
     robonect_status = robonect.getStatus()
-    result_sentence = "Batteriestatus fuer %s ist %s%%" % (
+    mower_status {
+	'0': 'der Status wird ermittelt',
+	'1': 'parkt',
+	'2': 'mäht',
+	'3': 'sucht die Ladestation',
+	'4': 'lädt',
+	'5': 'sucht (wartet auf das Umsetzen im manuellen Modus)',
+	'7': 'ist im Fehlerstatus',
+	'8': 'hat das Schleifensignal verloren',
+	'16': 'ist abgeschaltet',
+	'17': 'schläft'}
+
+    result_sentence = "Die Batterie von %s ist %s%% geladen. Die Mäher ist im Modus %s und %s"% (
         robonect_status["name"],
-        robonect_status["status"]["battery"])
+        robonect_status["status"]["battery"],
+        robonect_status["status"]["mode"],
+        mower_status[robonect_status["status"]["status"]])
+
     current_session_id = intentMessage.session_id
     hermes.publish_end_session(current_session_id, result_sentence)
 
