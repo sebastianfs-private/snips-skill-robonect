@@ -1,11 +1,14 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
+# complete Robonect API ist at https://forum.robonect.de/viewtopic.php?f=10&t=37
+
 import ConfigParser
 from hermes_python.hermes import Hermes
 from hermes_python.ontology import *
 import io
 from robonect.robonect_client import SnipsRobonect
+
 
 CONFIGURATION_ENCODING_FORMAT = "utf-8"
 CONFIG_INI = "config.ini"
@@ -27,7 +30,6 @@ def read_configuration_file(configuration_file):
 
 def subscribe_intent_callback(hermes, intentMessage):
     user,intentname = intentMessage.intent.intent_name.split(':')  # the user can fork the intent with this method
-    #if intentname == "GetStatusMower":
     conf = read_configuration_file(CONFIG_INI)
     action_wrapper(hermes, intentMessage, intentname, conf)
 
@@ -41,6 +43,7 @@ def action_wrapper(hermes, intentMessage, intentname, conf):
 
     Refer to the documentation for further details. 
     """
+
     robonect = SnipsRobonect(
 	conf["secret"]["ipaddress"],
 	conf["secret"]["username"],
@@ -95,7 +98,30 @@ def action_wrapper(hermes, intentMessage, intentname, conf):
 	    else:
 		result_sentence = u'%s konnte nicht erfolgreich gestartet werden'% (mower["name"])
 
-
+    if intentname == "SetModeMower":
+	for (slot_value, slot) in intentMessage.slots.items():
+	    print('Slot {} -> \n\tRaw: {} \tValue: {}'.format(slot_value, slot[0].raw_value, slot[0].slot_value.value.value))
+	mower = robonect.getStatus()
+	if slot[0].slot_value.value.value == 'auto':
+	    if mower["status"]["mode"] == 0:
+		result_sentence = u'%s ist bereits im Auto-Modus'% (mower["name"])
+	    else:
+		robonect.setMode("auto") # man | eod | home
+		result_sentence = u'%s ist jetzt im Auto-Modus'% (mower["name"])
+	elif slot[0].slot_value.value.value == 'manuell':
+	    if mower["status"]["mode"] == 1:
+		result_sentence = u'%s ist bereits im manuellen Modus'% (mower["name"])
+	    else:
+		robonect.setMode('man') # man | eod | home
+		result_sentence = u'%s ist jetzt im manuellen Modus'% (mower["name"])
+	elif slot[0].slot_value.value.value == 'home':
+	    if mower["status"]["mode"] == 2:
+		result_sentence = u'%s ist bereits im Modus hohm'% (mower["name"])
+	    else:
+		robonect.setMode('home') # man | eod | home
+		result_sentence = u'%s ist jetzt im Modus hohm'% (mower["name"])
+    else:
+	result_sentence = "Ich habe das Kommando nicht verstanden."
 
     current_session_id = intentMessage.session_id
     hermes.publish_end_session(current_session_id, result_sentence.encode('utf-8'))
