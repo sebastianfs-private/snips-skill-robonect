@@ -27,12 +27,12 @@ def read_configuration_file(configuration_file):
 
 def subscribe_intent_callback(hermes, intentMessage):
     user,intentname = intentMessage.intent.intent_name.split(':')  # the user can fork the intent with this method
-    if intentname == "GetStatusMower":
-        conf = read_configuration_file(CONFIG_INI)
-        action_wrapper(hermes, intentMessage, conf)
+    #if intentname == "GetStatusMower":
+    conf = read_configuration_file(CONFIG_INI)
+    action_wrapper(hermes, intentMessage, intentname, conf)
 
 
-def action_wrapper(hermes, intentMessage, conf):
+def action_wrapper(hermes, intentMessage, intentname, conf):
     """ Write the body of the function that will be executed once the intent is recognized. 
     In your scope, you have the following objects : 
     - intentMessage : an object that represents the recognized intent
@@ -45,27 +45,60 @@ def action_wrapper(hermes, intentMessage, conf):
 	conf["secret"]["ipaddress"],
 	conf["secret"]["username"],
 	conf["secret"]["password"])
-    robonect_status = robonect.getStatus()
-    mower_status {
-	'0': 'der Status wird ermittelt',
-	'1': 'parkt',
-	'2': 'mäht',
-	'3': 'sucht die Ladestation',
-	'4': 'lädt',
-	'5': 'sucht (wartet auf das Umsetzen im manuellen Modus)',
-	'7': 'ist im Fehlerstatus',
-	'8': 'hat das Schleifensignal verloren',
-	'16': 'ist abgeschaltet',
-	'17': 'schläft'}
 
-    result_sentence = "Die Batterie von %s ist %s%% geladen. Die Mäher ist im Modus %s und %s"% (
-        robonect_status["name"],
-        robonect_status["status"]["battery"],
-        robonect_status["status"]["mode"],
-        mower_status[robonect_status["status"]["status"]])
+    if intentname == "GetStatusMower":
+	mower = robonect.getStatus()
+	mower_status_codes = {
+	    0: u'der Status wird ermittelt',
+	    1: u'parkt',
+	    2: u'mäht',
+	    3: u'sucht die Ladestation',
+	    4: u'lädt',
+	    5: u'sucht (wartet auf das Umsetzen im manuellen Modus)',
+	    7: u'ist im Fehlerstatus',
+	    8: u'hat das Schleifensignal verloren',
+	    16: u'ist abgeschaltet',
+	    17: u'schläft'}
+	mower_mode_codes = {
+	    0: 'Auto',
+	    1: 'manuell',
+	    2: 'zu Hause',
+	    3: 'Demo'}
+
+	result_sentence = u'Die Batterie von %s ist %s%% geladen. Der Rasenmäher ist im Modus %s und %s'% (
+	    mower["name"],
+	    mower["status"]["battery"],
+	    mower_mode_codes[mower["status"]["mode"]],
+	    mower_status_codes[mower["status"]["status"]])
+
+    if intentname == "StopMower":
+	mower = robonect.getStatus()
+	if mower["status"]["stopped"] is True:
+	    result_sentence = u'%s is bereits gestoppt'% (mower["name"])
+	else:
+	    robonect.stop()
+	    mower = robonect.getStatus()
+	    if mower["status"]["stopped"] is True:
+		result_sentence = u'%s wurde erfolgreich gestoppt'% (mower["name"])
+	    else:
+		result_sentence = u'%s konnte nicht erfolgreich gestoppt werden'% (mower["name"])
+
+    if intentname == "StartMower":
+	mower = robonect.getStatus()
+	if mower["status"]["stopped"] is False:
+	    result_sentence = u'%s is bereits gestartet'% (mower["name"])
+	else:
+	    robonect.start()
+	    mower = robonect.getStatus()
+	    if mower["status"]["stopped"] is False:
+		result_sentence = u'%s wurde erfolgreich gestartet'% (mower["name"])
+	    else:
+		result_sentence = u'%s konnte nicht erfolgreich gestartet werden'% (mower["name"])
+
+
 
     current_session_id = intentMessage.session_id
-    hermes.publish_end_session(current_session_id, result_sentence)
+    hermes.publish_end_session(current_session_id, result_sentence.encode('utf-8'))
 
 if __name__ == "__main__":
     """
