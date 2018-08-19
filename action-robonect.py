@@ -73,6 +73,8 @@ def action_wrapper(hermes, intentMessage, intentname, conf):
 	    mower["status"]["battery"],
 	    mower_mode_codes[mower["status"]["mode"]],
 	    mower_status_codes[mower["status"]["status"]])
+	hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))
+
 
     if intentname == "StopMower":
 	mower = robonect.getStatus()
@@ -85,6 +87,7 @@ def action_wrapper(hermes, intentMessage, intentname, conf):
 		result_sentence = u'%s wurde erfolgreich gestoppt'% (mower["name"])
 	    else:
 		result_sentence = u'%s konnte nicht erfolgreich gestoppt werden'% (mower["name"])
+	hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))
 
     if intentname == "StartMower":
 	mower = robonect.getStatus()
@@ -97,6 +100,7 @@ def action_wrapper(hermes, intentMessage, intentname, conf):
 		result_sentence = u'%s wurde erfolgreich gestartet'% (mower["name"])
 	    else:
 		result_sentence = u'%s konnte nicht erfolgreich gestartet werden'% (mower["name"])
+	hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))
 
     if intentname == "SetModeMower":
 	for (slot_value, slot) in intentMessage.slots.items():
@@ -120,9 +124,11 @@ def action_wrapper(hermes, intentMessage, intentname, conf):
 	    else:
 		robonect.setMode('home') # man | eod | home
 		result_sentence = u'%s ist jetzt im Modus hohm'% (mower["name"])
+	hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))
+    else:
+	result_sentence = u'Irgendwas hat nicht hingehauen'
+	hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8')) 
 
-    current_session_id = intentMessage.session_id
-    hermes.publish_end_session(current_session_id, result_sentence.encode('utf-8'))
 
 if __name__ == "__main__":
     """
