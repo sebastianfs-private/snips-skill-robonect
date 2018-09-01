@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
-# complete Robonect API ist at https://forum.robonect.de/viewtopic.php?f=10&t=37
+# complete Robonect API is at https://forum.robonect.de/viewtopic.php?f=10&t=37
 
 import ConfigParser
 from hermes_python.hermes import Hermes
