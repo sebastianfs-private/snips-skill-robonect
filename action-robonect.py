@@ -12,6 +12,12 @@ from robonect.robonect_client import SnipsRobonect
 CONFIGURATION_ENCODING_FORMAT = "utf-8"
 CONFIG_INI = "config.ini"
 
+import json
+
+# each intent has a language associated with it
+# extract language of first intent of assistant since there should only be one language per assistant
+lang = json.load(open('/usr/share/snips/assistant/assistant.json'))['intents'][0]['language'] 
+
 class SnipsConfigParser(ConfigParser.SafeConfigParser):
     def to_dict(self):
         return {section : {option_name : option for option_name, option in self.items(section)} for section in self.sections()}
@@ -55,19 +61,23 @@ def action_wrapper(hermes, intentMessage, conf):
 	mower = robonect.getStatus()
 	name = mower["name"]
 	battery = mower["status"]["battery"]
-	mcode = mower_mode_codes[mower["status"]["mode"]]
-	scode = mower_status_codes[mower["status"]["status"]]
+	#mcode = mower_mode_codes[mower["status"]["mode"]]
+	#scode = mower_status_codes[mower["status"]["status"]]
 
 	if lang == 'de':
-	    mower_status_codes = {
-		0: u'der Status wird ermittelt',1: u'parkt',2: u'mäht',3: u'sucht die Ladestation',4: u'lädt',5: u'sucht (wartet auf das Umsetzen im manuellen Modus)',7: u'ist im Fehlerstatus',8: u'hat das Schleifensignal verloren',16: u'ist abgeschaltet',17: u'schläft'}
-	    mower_mode_codes = {0: 'Auto',1: 'manuell',2: 'zu Hause',3: 'Demo'}
+	    scode = {
+		0: u'der Status wird ermittelt',1: u'parkt',2: u'mäht',
+		3: u'sucht die Ladestation',4: u'lädt',5: u'sucht (wartet auf das Umsetzen im manuellen Modus)',
+		7: u'ist im Fehlerstatus',8: u'hat das Schleifensignal verloren',16: u'ist abgeschaltet',17: u'schläft'}[mower["status"]["status"]]
+	    mcode = {0: 'Auto',1: 'manuell',2: 'zu Hause',3: 'Demo'}[mower["status"]["mode"]]
 	    result_sentence = u'Die Batterie von %s ist %s%% geladen. Der Rasenmäher ist im Modus %s und %s'% (name,battery,mcode,scode)
 
 	elif lang == 'en':
-	    mower_status_codes = {
-		0: u'status check in progress',1: u'parking',2: u'mowing',3: u'searching for charging station',4: u'charging',5: u'searching (wating for change to manual mode)',7: u'is in error state',8: u'has lost the loop signal',16: u'is powered down',17: u'sleeping'}
-	    mower_mode_codes = {0: 'Auto',1: 'manual',2: 'home',3: 'Demo'}
+	    scode = {
+		0: u'status check in progress',1: u'parking',2: u'mowing',
+		3: u'searching for charging station',4: u'charging',5: u'searching (wating for change to manual mode)',
+		7: u'is in error state',8: u'has lost the loop signal',16: u'is powered down',17: u'sleeping'}[mower["status"]["status"]]
+	    mcode = {0: 'Auto',1: 'manual',2: 'home',3: 'Demo'}[mower["status"]["mode"]]
 	    result_sentence = u'Charge level of the battery for %s is %s%%. The moweris in %s mode and %s'% (name,battery,mcode,scode)
 
     if intentname == "StopMower":
