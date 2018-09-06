@@ -53,19 +53,22 @@ def action_wrapper(hermes, intentMessage, conf):
 
     if intentname == "GetStatusMower":
 	mower = robonect.getStatus()
-	if lang = 'de':
+	name = mower["name"]
+	battery = mower["status"]["battery"]
+	mcode = mower_mode_codes[mower["status"]["mode"]]
+	scode = mower_status_codes[mower["status"]["status"]]
+
+	if lang == 'de':
 	    mower_status_codes = {
 		0: u'der Status wird ermittelt',1: u'parkt',2: u'mäht',3: u'sucht die Ladestation',4: u'lädt',5: u'sucht (wartet auf das Umsetzen im manuellen Modus)',7: u'ist im Fehlerstatus',8: u'hat das Schleifensignal verloren',16: u'ist abgeschaltet',17: u'schläft'}
 	    mower_mode_codes = {0: 'Auto',1: 'manuell',2: 'zu Hause',3: 'Demo'}
-	elif lang = 'en':
+	    result_sentence = u'Die Batterie von %s ist %s%% geladen. Der Rasenmäher ist im Modus %s und %s'% (name,battery,mcode,scode)
+
+	elif lang == 'en':
+	    mower_status_codes = {
 		0: u'status check in progress',1: u'parking',2: u'mowing',3: u'searching for charging station',4: u'charging',5: u'searching (wating for change to manual mode)',7: u'is in error state',8: u'has lost the loop signal',16: u'is powered down',17: u'sleeping'}
-
-
-	result_sentence = u'Die Batterie von %s ist %s%% geladen. Der Rasenmäher ist im Modus %s und %s'% (
-	    mower["name"],
-	    mower["status"]["battery"],
-	    mower_mode_codes[mower["status"]["mode"]],
-	    mower_status_codes[mower["status"]["status"]])
+	    mower_mode_codes = {0: 'Auto',1: 'manual',2: 'home',3: 'Demo'}
+	    result_sentence = u'Charge level of the battery for %s is %s%%. The moweris in %s mode and %s'% (name,battery,mcode,scode)
 
     if intentname == "StopMower":
 	mower = robonect.getStatus()
