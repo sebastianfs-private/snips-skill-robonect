@@ -7,12 +7,11 @@ import ConfigParser
 from hermes_python.hermes import Hermes
 from hermes_python.ontology import *
 import io
+import json
 from robonect.robonect_client import SnipsRobonect
 
 CONFIGURATION_ENCODING_FORMAT = "utf-8"
 CONFIG_INI = "config.ini"
-
-import json
 
 # each intent has a language associated with it
 # extract language of first intent of assistant since there should only be one language per assistant
@@ -61,8 +60,6 @@ def action_wrapper(hermes, intentMessage, conf):
 	mower = robonect.getStatus()
 	name = mower["name"]
 	battery = mower["status"]["battery"]
-	#mcode = mower_mode_codes[mower["status"]["mode"]]
-	#scode = mower_status_codes[mower["status"]["status"]]
 
 	if lang == 'de':
 	    scode = {
@@ -83,26 +80,45 @@ def action_wrapper(hermes, intentMessage, conf):
     if intentname == "StopMower":
 	mower = robonect.getStatus()
 	if mower["status"]["stopped"] is True:
-	    result_sentence = u'%s is bereits gestoppt'% (mower["name"])
+	    if lang == 'de':
+		result_sentence = u'%s is bereits gestoppt'% (mower["name"])
+	    elif lang == 'en':
+		result_sentence = u'%s has stopped already'% (mower["name"])
+
 	else:
 	    robonect.stop()
 	    mower = robonect.getStatus()
 	    if mower["status"]["stopped"] is True:
-		result_sentence = u'%s wurde erfolgreich gestoppt'% (mower["name"])
+		if lang == 'de':
+		    result_sentence = u'%s wurde erfolgreich gestoppt'% (mower["name"])
+		elif lang == 'en':
+		    result_sentence = u'%s has been stopped'% (mower["name"])
 	    else:
-		result_sentence = u'%s konnte nicht erfolgreich gestoppt werden'% (mower["name"])
+		if lang == 'de':
+		    result_sentence = u'%s konnte nicht erfolgreich gestoppt werden'% (mower["name"])
+		elif lang == 'en':
+		    result_sentence = u'%s could not be stopped successfully'% (mower["name"])
 
     if intentname == "StartMower":
 	mower = robonect.getStatus()
 	if mower["status"]["stopped"] is False:
-	    result_sentence = u'%s is bereits gestartet'% (mower["name"])
+	    if lang == 'de':
+		result_sentence = u'%s is bereits gestartet'% (mower["name"])
+	    elif lang == 'en':
+		result_sentence = u'%s has been started already'% (mower["name"])
 	else:
 	    robonect.start()
 	    mower = robonect.getStatus()
 	    if mower["status"]["stopped"] is False:
-		result_sentence = u'%s wurde erfolgreich gestartet'% (mower["name"])
+		if lang == 'de':
+		    result_sentence = u'%s wurde erfolgreich gestartet'% (mower["name"])
+		elif lang == 'en':
+		    result_sentence = u'%s has been started successfully'% (mower["name"])
 	    else:
-		result_sentence = u'%s konnte nicht erfolgreich gestartet werden'% (mower["name"])
+		if lang == 'de':
+		    result_sentence = u'%s konnte nicht erfolgreich gestartet werden'% (mower["name"])
+		elif lang == 'en':
+		    result_sentence = u'%s could not be started successfully'% (mower["name"])
 
     if intentname == "SetModeMower":
 	for (slot_value, slot) in intentMessage.slots.items():
@@ -110,22 +126,40 @@ def action_wrapper(hermes, intentMessage, conf):
 	mower = robonect.getStatus()
 	if slot[0].slot_value.value.value == 'auto':
 	    if mower["status"]["mode"] == 0:
-		result_sentence = u'%s ist bereits im Auto-Modus'% (mower["name"])
+		if lang == 'de':
+		    result_sentence = u'%s ist bereits im Auto-Modus'% (mower["name"])
+		elif lang == 'en':
+		    result_sentence = u'%s is already in auto mode'% (mower["name"])
 	    else:
 		robonect.setMode("auto")
-		result_sentence = u'%s ist jetzt im Auto-Modus'% (mower["name"])
+		if lang == 'de':
+		    result_sentence = u'%s ist jetzt im Auto-Modus'% (mower["name"])
+		elif lang == 'en':
+		    result_sentence = u'%s is now in auto mode'% (mower["name"])
 	elif slot[0].slot_value.value.value == 'manuell':
 	    if mower["status"]["mode"] == 1:
-		result_sentence = u'%s ist bereits im manuellen Modus'% (mower["name"])
+		if lang == 'de':
+		    result_sentence = u'%s ist bereits im manuellen Modus'% (mower["name"])
+		elif lang == 'en':
+		    result_sentence = u'%s is already in manual mode'% (mower["name"])
 	    else:
 		robonect.setMode('man')
-		result_sentence = u'%s ist jetzt im manuellen Modus'% (mower["name"])
+		if lang == 'de':
+		    result_sentence = u'%s ist jetzt im manuellen Modus'% (mower["name"])
+		elif lang == 'en':
+		    result_sentence = u'%s is now in manual mode'% (mower["name"])
 	elif slot[0].slot_value.value.value == 'home':
 	    if mower["status"]["mode"] == 2:
-		result_sentence = u'%s ist bereits im Modus hohm'% (mower["name"])
+		if lang == 'de':
+		    result_sentence = u'%s ist bereits im Modus hohm'% (mower["name"])
+		elif lang == 'en':
+		    result_sentence = u'%s is in home mode already'% (mower["name"])
 	    else:
 		robonect.setMode('home')
-		result_sentence = u'%s ist jetzt im Modus hohm'% (mower["name"])
+		if lang == 'de':
+		    result_sentence = u'%s ist jetzt im Modus hohm'% (mower["name"])
+		elif lang == 'en':
+		    result_sentence = u'%s is in mode home now'% (mower["name"])
 
     hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))
 
