@@ -55,8 +55,6 @@ def action_wrapper(hermes, intentMessage, conf):
 	conf["secret"]["username"],
 	conf["secret"]["password"])
 
-	print(conf["secret"]["ipaddress"])
-
 	if intentname == "GetStatusMower":
 		mower = robonect.getStatus()
 		name = mower["name"]
