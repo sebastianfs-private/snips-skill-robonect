@@ -1,2 +1,2 @@
-requests==2.18.4
-hermes_python
+requests>=2.20.0
+hermes-python>=0.1.29

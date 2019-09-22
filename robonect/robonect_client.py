@@ -52,4 +52,3 @@ class SnipsRobonect:
 		else:
 			print("Failed to stop")
 			return False
-
