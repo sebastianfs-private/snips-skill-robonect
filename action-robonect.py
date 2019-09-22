@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 
 # complete Robonect API is at https://forum.robonect.de/viewtopic.php?f=10&t=37
 
