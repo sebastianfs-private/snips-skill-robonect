@@ -161,7 +161,7 @@ def action_wrapper(hermes, intentMessage, conf):
 				elif lang == 'en':
 					result_sentence = u'%s is in mode home now'% (mower["name"])
 		else:
-			result_sentence = result_sentence = u'%s Fehler'% (mower["name"])
+			result_sentence = u'%s Fehler'% (mower["name"])
 
 	print(result_sentence)
 
