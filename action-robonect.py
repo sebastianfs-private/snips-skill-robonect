@@ -165,7 +165,7 @@ def action_wrapper(hermes, intentMessage, conf):
 
 	print(result_sentence)
 
-	#hermes.publish_end_session(intentMessage.session_id, result_sentence)
+	hermes.publish_end_session(intentMessage.session_id, result_sentence)
 
 if __name__ == "__main__":
 	with Hermes("localhost:1883") as h:
