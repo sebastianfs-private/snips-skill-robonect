@@ -120,9 +120,9 @@ def action_wrapper(hermes, intentMessage, conf):
 					result_sentence = u'%s could not be started successfully'% (mower["name"])
 
 	if intentname == "SetModeMower":
-		# for (slot_value, slot) in intentMessage.slots.items():
-		# 	print(slot[0].slot_value.value.value.encode('utf-8'))
-		# 	print('Slot {} -> \n\tRaw: {} \tValue: {}'.format(slot_value, slot[0].raw_value, slot[0].slot_value.value.value))
+		for (slot_value, slot) in intentMessage.slots.items():
+			print(slot[0].slot_value.value.value.encode('utf-8'))
+			print('Slot {} -> \n\tRaw: {} \tValue: {}'.format(slot_value, slot[0].raw_value, slot[0].slot_value.value.value))
 		mower = robonect.getStatus()
 		# if slot[0].slot_value.value.value == 'auto':
 		# 	if mower["status"]["mode"] == 0:
