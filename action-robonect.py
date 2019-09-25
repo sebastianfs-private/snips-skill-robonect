@@ -76,14 +76,24 @@ def action_wrapper(hermes, intentMessage, conf):
 			1: 'manuell',
 			2: 'zu Hause',
 			3: 'Demo'}[mower["status"]["mode"]]
-			result_sentence = u'%s befindet sich im %s Modus und %s. Seine Batterie ist %s%% geladen.'% (name,battery,mcode,scode)
+			result_sentence = u'%s befindet sich im %s Modus und %s. Seine Batterie ist %s%% geladen.'% (name,mcode,scode,battery)
 
 		elif lang == 'en':
 			scode = {
-			0: u'status check in progress',1: u'parking',2: u'mowing',
-			3: u'searching for charging station',4: u'charging',5: u'searching (wating for change to manual mode)',
-			7: u'is in error state',8: u'has lost the loop signal',16: u'is powered down',17: u'sleeping'}[mower["status"]["status"]]
-			mcode = {0: 'Auto',1: 'manual',2: 'home',3: 'Demo'}[mower["status"]["mode"]]
+			0: u'status check in progress',
+			1: u'parking',
+			2: u'mowing',
+			3: u'searching for charging station',
+			4: u'charging',
+			5: u'searching (wating for change to manual mode)',
+			7: u'is in error state',
+			8: u'has lost the loop signal',
+			16: u'is powered down',
+			17: u'sleeping'}[mower["status"]["status"]]
+			mcode = {0: 'Auto',
+			1: 'manual',
+			2: 'home',
+			3: 'Demo'}[mower["status"]["mode"]]
 			result_sentence = u'Charge level of the battery for %s is %s%%. The moweris in %s mode and %s'% (name,battery,mcode,scode)
 
 	if intentname == "StopMower":
