@@ -28,7 +28,7 @@ def read_configuration_file(configuration_file):
 			conf_parser = SnipsConfigParser()
 			conf_parser.readfp(f)
 			return conf_parser.to_dict()
-	except (IOError, ConfigParser.Error) as e:
+	except (IOError, configparser.Error) as e:
 		return dict()
 
 
@@ -62,11 +62,21 @@ def action_wrapper(hermes, intentMessage, conf):
 
 		if lang == 'de':
 			scode = {
-			0: u'der Status wird ermittelt',1: u'parkt',2: u'mäht',
-			3: u'sucht die Ladestation',4: u'lädt',5: u'sucht (wartet auf das Umsetzen im manuellen Modus)',
-			7: u'ist im Fehlerstatus',8: u'hat das Schleifensignal verloren',16: u'ist abgeschaltet',17: u'schläft'}[mower["status"]["status"]]
-			mcode = {0: 'Auto',1: 'manuell',2: 'zu Hause',3: 'Demo'}[mower["status"]["mode"]]
-			result_sentence = u'Die Batterie von %s ist %s%% geladen. Der Rasenmäher ist im Modus %s und %s'% (name,battery,mcode,scode)
+			0: u'der Status wird ermittelt',
+			1: u'parkt',
+			2: u'mäht',
+			3: u'sucht die Ladestation',
+			4: u'lädt',
+			5: u'sucht (wartet auf das Umsetzen im manuellen Modus)',
+			7: u'ist im Fehlerstatus',
+			8: u'hat das Schleifensignal verloren',
+			16: u'ist abgeschaltet',
+			17: u'schläft'}[mower["status"]["status"]]
+			mcode = {0: 'Auto',
+			1: 'manuell',
+			2: 'zu Hause',
+			3: 'Demo'}[mower["status"]["mode"]]
+			result_sentence = u'%s befindet sich im %s Modus und %s. Seine Batterie ist %s%% geladen.'% (name,battery,mcode,scode)
 
 		elif lang == 'en':
 			scode = {
