@@ -142,6 +142,8 @@ def action_wrapper(hermes, intentMessage, conf):
 			# 		result_sentence = u'%s is already in auto mode'% (mower["name"])
 			# else:
 			robonect.setMode("auto")
+			if mower["status"]["stopped"] == True:
+				robonect.start()	
 			if lang == 'de':
 				result_sentence = u'%s ist jetzt im Auto-Modus'% (mower["name"])
 			elif lang == 'en':
@@ -154,6 +156,8 @@ def action_wrapper(hermes, intentMessage, conf):
 			# 		result_sentence = u'%s is already in manual mode'% (mower["name"])
 			# else:
 			robonect.setMode('man')
+			if mower["status"]["stopped"] == True:
+				robonect.start()	
 			if lang == 'de':
 				result_sentence = u'%s ist jetzt im manuellen Modus'% (mower["name"])
 			elif lang == 'en':
@@ -166,6 +170,8 @@ def action_wrapper(hermes, intentMessage, conf):
 			# 		result_sentence = u'%s is in home mode already'% (mower["name"])
 			# else:
 			robonect.setMode('home')
+			if mower["status"]["stopped"] == True:
+				robonect.start()	
 			if lang == 'de':
 				result_sentence = u'%s ist jetzt im Modus home'% (mower["name"])
 			elif lang == 'en':
@@ -178,6 +184,8 @@ def action_wrapper(hermes, intentMessage, conf):
 			# 		result_sentence = u'%s is in home mode already'% (mower["name"])
 			# else:
 			robonect.setMode('eod')
+			if mower["status"]["stopped"] == True:
+				robonect.start()	
 			if lang == 'de':
 				result_sentence = u'%s ist jetzt im Modus Feierabend'% (mower["name"])
 			elif lang == 'en':
