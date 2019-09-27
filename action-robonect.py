@@ -134,7 +134,8 @@ def action_wrapper(hermes, intentMessage, conf):
 			print('Slot {} -> \n\tRaw: {} \tValue: {}'.format(slot_value, slot[0].raw_value, slot[0].slot_value.value.value))
 		mower = robonect.getStatus()
 
-		print(slot[0].slot_value.value.value)
+		print(intentMessage.slots.Device.first().value)
+		print(intentMessage.slots.Value.first().value)
 
 		if slot[0].slot_value.value.value == 'auto':
 			if mower["status"]["mode"] == 0:
