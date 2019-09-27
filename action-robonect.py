@@ -137,42 +137,54 @@ def action_wrapper(hermes, intentMessage, conf):
 		print(intentMessage.slots.Device.first().value)
 		print(intentMessage.slots.Value.first().value)
 
-		if slot[0].slot_value.value.value == 'auto':
-			if mower["status"]["mode"] == 0:
-				if lang == 'de':
-					result_sentence = u'%s ist bereits im Auto-Modus'% (mower["name"])
-				elif lang == 'en':
-					result_sentence = u'%s is already in auto mode'% (mower["name"])
-			else:
-				robonect.setMode("auto")
-				if lang == 'de':
-					result_sentence = u'%s ist jetzt im Auto-Modus'% (mower["name"])
-				elif lang == 'en':
-					result_sentence = u'%s is now in auto mode'% (mower["name"])
-		elif slot[0].slot_value.value.value == 'manuell':
-			if mower["status"]["mode"] == 1:
-				if lang == 'de':
-					result_sentence = u'%s ist bereits im manuellen Modus'% (mower["name"])
-				elif lang == 'en':
-					result_sentence = u'%s is already in manual mode'% (mower["name"])
-			else:
-				robonect.setMode('man')
-				if lang == 'de':
-					result_sentence = u'%s ist jetzt im manuellen Modus'% (mower["name"])
-				elif lang == 'en':
-					result_sentence = u'%s is now in manual mode'% (mower["name"])
-		elif slot[0].slot_value.value.value == 'home':
-			if mower["status"]["mode"] == 2:
-				if lang == 'de':
-					result_sentence = u'%s ist bereits im Modus home'% (mower["name"])
-				elif lang == 'en':
-					result_sentence = u'%s is in home mode already'% (mower["name"])
-			else:
-				robonect.setMode('home')
-				if lang == 'de':
-					result_sentence = u'%s ist jetzt im Modus home'% (mower["name"])
-				elif lang == 'en':
-					result_sentence = u'%s is in mode home now'% (mower["name"])
+		if intentMessage.slots.Value.first().value == 'auto':
+			# if mower["status"]["mode"] == 0:
+			# 	if lang == 'de':
+			# 		result_sentence = u'%s ist bereits im Auto-Modus'% (mower["name"])
+			# 	elif lang == 'en':
+			# 		result_sentence = u'%s is already in auto mode'% (mower["name"])
+			# else:
+			robonect.setMode("auto")
+			if lang == 'de':
+				result_sentence = u'%s ist jetzt im Auto-Modus'% (mower["name"])
+			elif lang == 'en':
+				result_sentence = u'%s is now in auto mode'% (mower["name"])
+		elif intentMessage.slots.Value.first().value == 'manuell':
+			# if mower["status"]["mode"] == 1:
+			# 	if lang == 'de':
+			# 		result_sentence = u'%s ist bereits im manuellen Modus'% (mower["name"])
+			# 	elif lang == 'en':
+			# 		result_sentence = u'%s is already in manual mode'% (mower["name"])
+			# else:
+			robonect.setMode('man')
+			if lang == 'de':
+				result_sentence = u'%s ist jetzt im manuellen Modus'% (mower["name"])
+			elif lang == 'en':
+				result_sentence = u'%s is now in manual mode'% (mower["name"])
+		elif intentMessage.slots.Value.first().value == 'home':
+			# if mower["status"]["mode"] == 2:
+			# 	if lang == 'de':
+			# 		result_sentence = u'%s ist bereits im Modus home'% (mower["name"])
+			# 	elif lang == 'en':
+			# 		result_sentence = u'%s is in home mode already'% (mower["name"])
+			# else:
+			robonect.setMode('home')
+			if lang == 'de':
+				result_sentence = u'%s ist jetzt im Modus home'% (mower["name"])
+			elif lang == 'en':
+				result_sentence = u'%s is in mode home now'% (mower["name"])
+		elif intentMessage.slots.Value.first().value == 'eod':
+			# if mower["status"]["mode"] == 2:
+			# 	if lang == 'de':
+			# 		result_sentence = u'%s ist bereits im Modus home'% (mower["name"])
+			# 	elif lang == 'en':
+			# 		result_sentence = u'%s is in home mode already'% (mower["name"])
+			# else:
+			robonect.setMode('eod')
+			if lang == 'de':
+				result_sentence = u'%s ist jetzt im Modus Feierabend'% (mower["name"])
+			elif lang == 'en':
+				result_sentence = u'%s is in mode end of day now'% (mower["name"])
 		else:
 			result_sentence = u'%s Fehler'% (mower["name"])
 
