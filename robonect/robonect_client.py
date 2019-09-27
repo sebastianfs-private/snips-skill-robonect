@@ -17,7 +17,7 @@ class SnipsRobonect:
 			print("Failed to get status, error: %s" % r.status_code)
 			return False
 
-	# def setMode(self, mode):
+	def setMode(self, mode):
 		r = requests.get(self.getUrl() + "?cmd=mode&mode=%s" % mode, auth=(self.username, self.password))
 		if r.status_code == 200:
 			return True
